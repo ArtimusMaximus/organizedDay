@@ -1,0 +1,57 @@
+.lineItem {
+    
+    background-color: aqua;
+    border-radius: 20%;
+    /* display: inline-block; */
+    padding: 1rem;
+    margin: 1rem;
+    width: 10rem;
+    display: flex;
+    flex-direction: row;
+    
+    
+}
+
+.cbInputs {
+    accent-color: pink;
+}
+
+/* #tain {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    margin: auto;
+    
+} */
+
+.close2 {
+    cursor: pointer;
+}
+#tain {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-flow: row;
+}
+
+
+@media screen and (max-width: 487px) {
+    #tain {
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+}
+@media screen and (min-width: 488px) and (max-width: 1080px) {
+    #tain {
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+#sub:hover, #clearForm:hover {
+    background-color: rgb(220, 252, 231);
+}
+
