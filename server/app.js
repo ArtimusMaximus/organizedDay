@@ -52,7 +52,7 @@ app.use(express.static(__dirname + '/dist'))
 
 
 routes(app);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4444;
 
 
 
