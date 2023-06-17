@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server/app.js"
+    "start": "nodemon server/app.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",

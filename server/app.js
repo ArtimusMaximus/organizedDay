@@ -42,17 +42,18 @@ mongoMain()
 //     .then(() => console.log('connected to mongodb successfully'))
 //     .catch(console.error)
 
-
+console.log(__dirname);
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static(__dirname)) // this replaces your GET '/'
+// app.use(express.static(__dirname)) // this replaces your GET '/'
 app.use(express.static(__dirname + '/dist'))
+// app.use(express.static(__dirname + '/login/'))
 
 
 routes(app);
-const PORT = process.env.PORT || 4444;
+const PORT = process.env.PORT || 3333;
 
 
 

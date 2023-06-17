@@ -5,6 +5,7 @@ import { __dirname } from '../dir.js';
 
 
 
+
 export const routes = app => {
     app.route('/goal')
         .get((req, res) => {
@@ -14,6 +15,11 @@ export const routes = app => {
         .post(createGoal)
 
     app.route('/')
+        .get((req, res) => {
+            res.sendFile(__dirname + '/login/' );
+            console.log('supposed redirect ?');
+            console.log(__dirname);
+        })
         // .get((req, res) => {
         //     res.send('You have reaced the home page')
         //     console.log('/ Home')

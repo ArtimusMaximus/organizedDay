@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv'
 // mongoMain().catch(err => console.log(err))
 dotenv.config();
 let pw = process.env.PASSWORD
-const uri = `mongodb+srv://dbUserMain:${pw}@cluster0.hlxx9.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://dbUser:${pw}@cluster0.hlxx9.mongodb.net/?retryWrites=true&w=majority`
 
 async function mongoMain() {
     await mongoose.connect(uri)
