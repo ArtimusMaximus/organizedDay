@@ -47,7 +47,7 @@ console.log(__dirname);
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// app.use(express.static(__dirname)) // this replaces your GET '/'
+app.use(express.static(__dirname)) // this replaces your GET '/'
 app.use(express.static(__dirname + '/dist'))
 // app.use(express.static(__dirname + '/login/'))
 

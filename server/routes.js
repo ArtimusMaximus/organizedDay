@@ -1,4 +1,4 @@
-import { createGoal, findGoals, updateComplete, removeGoal } from "./controller.js"
+import { createGoal, findGoals, updateComplete, removeGoal, createUser, checkForUser } from "./controller.js"
 import path from 'path';
 import { __filename } from '../dir.js';
 import { __dirname } from '../dir.js';
@@ -7,19 +7,21 @@ import { __dirname } from '../dir.js';
 
 
 export const routes = app => {
+    app.route('/')
+        // .get((req, res) => {
+        //     res.sendFile(__dirname);
+        //     console.log('supposed redirect ?');
+        //     console.log(__dirname);
+        // })
+        .post(createUser)
+
     app.route('/goal')
         .get((req, res) => {
-            res.sendFile(__dirname + '/index.html')
+            res.sendFile(__dirname + '/goal_page/')
             console.log('THE GET FIREED OFF');
         })
         .post(createGoal)
 
-    app.route('/')
-        .get((req, res) => {
-            res.sendFile(__dirname + '/login/' );
-            console.log('supposed redirect ?');
-            console.log(__dirname);
-        })
         // .get((req, res) => {
         //     res.send('You have reaced the home page')
         //     console.log('/ Home')
@@ -33,6 +35,8 @@ export const routes = app => {
         // .get((req, res) => {
         //     res.sendFile(path.join(__dirname, '/styles2.css'))
         // })
+    app.route('/finduser')
+       .get(checkForUser)
         
     app.route('/find')
         .get(findGoals)

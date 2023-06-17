@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <base href="/"> -->
+    <link rel="stylesheet" type="text/css" href="../dist/output.css">
+    <link rel="stylesheet" type="text/css" href="../styles2.css">
+    <!-- <link rel="stylesheet" type="text/css" href="/styles2.css"> -->
+    <title>Completion List</title>
+    
+  </head>
+  <body class="bg-base-100">
+    <div class="w-full grid">
+      
+      <div class="p-4 justify-center items-center w-1/2 m-auto">
+        <h1 class="text-4xl text-center p-4 font-thin">
+          Daily Goals
+        </h1>
+        <form id="form" class="flex flex-col" action="/goal" method="post">
+        <!-- <form id="form" class="flex flex-col"> -->
+          <input id="goalID" class="input input-success border border-solid border-black rounded-md p-1" placeholder="" type="text" name="goal">
+          <label for="">Goal</label>
+          <input id="timeID" class="input input-success border border-solid border-black rounded-md p-1" type="number" name="timeLimit">
+          <label for="">Timeline</label>
+          <span>
+            <button id="sub" class="btn border border-solid border-black rounded-lg p-2 hover">Add</button>
+            <button id="clearForm" class="btn border border-solid border-black rounded-lg p-2" type="button">Clear</button>
+          </span>
+        </form>
+
+        <!-- <button id="getBtn" class="border border-solid border-black rounded-lg p-4 mt-5">Get Button</button> -->
+        <button id="completeBtn" class="btn border border-solid border-black rounded-lg p-4 mt-5">Completed Goals</button>
+        <button id="incompleteBtn" class="btn border border-solid border-black rounded-lg p-4 mt-5">Incomplete Goals</button>
+      </div>
+      <div id="goalsDiv" class="row-start-2 p-4">
+        <!-- appended data here -->
+        <div id="tain"></div>
+        
+      </div>
+
+    </div>
+<!-- sub form listeners and fetch -->
+    <script>
+      let goalID;
+      document.querySelector('#goalID')
+        .addEventListener('keyup', (e) => {
+          // console.log(e.target.value)
+          goalID = e.target.value
+      })
+      let timeID;
+      document.querySelector('#timeID')
+        .addEventListener('keyup', (e) => {
+          // console.log(e.target.value)
+          timeID = e.target.value
+      })
+
+      document.querySelector('#sub')
+        .addEventListener('click', e => {
+          e.preventDefault();
+          let data = {
+            goal: goalID,
+            timeLimit: timeID
+          }
+          document.querySelector('#goalID').value = '';
+          document.querySelector('#timeID').value = '';
+
+            fetch('/goal', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+              
+            })
+            .then(res => res.json())
+            .then(data => appendData([...dataArr, data]))
+            .then(() => inputListeners())
+            .then(() => closeListeners())
+            .then(() => document.querySelector('#goalID').focus())
+            .catch(err => console.log(err))
+
+        })
+    </script>
+
+    <!-- initial fetch of data -->
+    <script>
+      (async function() {
+      await fetch('/find', { method: 'GET' })
+          .then(res => res.json())
+          // .then(data => console.log(data))
+          .then(data => appendData(data))
+          .then(() => inputListeners())
+          .then(() => closeListeners())
+          .catch(err => console.log(err))
+      }())
+    </script>
+
+    <!-- append data -->
+    <script>
+      let dataArr = [];
+      function appendData(data, newData) {
+        dataArr = [...data]
+        
+        // data === false ? dataArr = [...new Set(newData)] : null
+        // data !== false ? dataArr = [...new Set(data)] : null
+        // console.log(dataArr);
+        let div = document.querySelector('#tain')
+
+        div.innerHTML = dataArr?.map((i, index) => `
+          <div class="bg-neutral min-w-sm rounded overflow-hidden shadow-lg m-1 grid-cols-4">
+            <span class="close flex justify-end p-2 pt-1 pb-0 font-bold"><div id="closes${index}" class="close2">X</div></span>
+            <div class="px-6 pb-2 pt-0">
+              <div class="font-bold text-l mb-2">${i.goal}</div>
+              <div class=" text-sm mb-2">TTC: ${i.timeLimit}</div>
+              <p class="text-gray-700 text-base">
+                ${i.description ? i.description : ''}
+                <input name="in${index}" class='cbInputs checkbox checkbox-accent' type='checkbox' ${i.completed ? 'checked' : ''} />
+                <label class="text-sm text-accent">Completed</label>
+                <p class="text-sm">${i.createdAt ? 'Goal made: ' + i.createdAt.slice(0, 10).split('-')[1] + '-' + i.createdAt.slice(0, 10).split('-')[2] + '-' + i.createdAt.slice(0, 10).split('-')[0] : ''}</p>
+                <p class="text-sm">${i.createdAt ? 'Goal started at: ' + i.createdAt.slice(11, 19) : ''}</p>
+                <p class="text-sm">${i.updatedAt !== i.createdAt ? 'Goal updated: ' + i.updatedAt.slice(11, 19) : ''}</p>
+              </p>
+            </div>
+            <div class="px-6 pt-4 pb-2">
+              ${i.completed 
+                ? '<span class="inline-block bg-success rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#Finisher</span>' 
+                : '<span class="inline-block bg-error rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">#in progress</span>'
+              }
+            </div>
+          </div>
+        `).join('')
+        // document.querySelector('#goalsDiv').appendChild(div)
+      }
+    </script>
+
+<!-- input listeners -->
+<!-- index finder -->
+    <script>
+      let index;
+      function inputListeners() {
+        let cbInputs = document.querySelectorAll('.cbInputs')
+        // console.log(cbInputs?.forEach(i => console.log(i?.checked)));
+        cbInputs && cbInputs.forEach((input) => {
+          input.addEventListener('click', e => {
+            if (e) {
+              index = input.name.slice(2)
+            }
+            findIndex(index)
+          })
+        })
+      }
+      let updatedData;
+      async function findIndex(index) {
+        let falseData = false
+        updatedData = [...dataArr];
+        let id = dataArr[index]._id
+        let isCompleted = dataArr[index]?.completed
+        // console.log(isCompleted);
+        let postData = { _id: id, completed: isCompleted === undefined || isCompleted === false ? true : isCompleted === true ? false : console.log('dunno') }
+
+        await fetch('/updateCompleted', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(postData)
+        })
+        .then(res => res.json())
+        .then(data => updatedData[index] = data)
+        // .then(() => console.log(updatedData))
+        .then(() => appendData(updatedData))
+        .then(() => inputListeners())
+        .then(() => closeListeners())
+        .catch(err => console.log(err))
+      }
+    </script>
+    
+    <!-- delete goal -->
+    <script>
+      const delay = t => new Promise(resolve => setTimeout(resolve, t))
+
+      function closeListeners() {
+        let closes = document.querySelectorAll('.close')
+        closes && closes.forEach(x => {
+          x.addEventListener('click', e => {
+            if (e) {
+              let id = e.target.id;
+              let index = id.slice(6)
+  
+              const removeGoal = async () => {
+                let _id = { _id: dataArr[index]._id }
+                await fetch('/del', {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(_id)
+                })
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .then(() => appendData(dataArr.filter(i => i._id !== _id._id)))
+                .then(() => inputListeners())
+                .then(() => closeListeners())
+                .catch(err => console.log(err))
+              }
+              removeGoal()
+
+            }
+          })
+        })
+      }
+      // delay(1000)
+      //   .then(() => closeListeners())
+        
+    </script>
+    <script>
+      let clearForm = document.querySelector('#clearForm');
+      let inputs = document.querySelectorAll('input');
+      clearForm.addEventListener('click', () => {
+        inputs.forEach((input) => {
+            input.value = ''
+        })
+      })
+    </script>
+    <!-- <script
+      async
+      crossorigin="anonymous"
+      data-clerk-publishable-key="pk_test_cm9idXN0LW1hZ2dvdC03OS5jbGVyay5hY2NvdW50cy5kZXYk"
+      onload="window.Clerk.load()"
+      src="https://robust-maggot-79.clerk.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"
+      type="text/javascript">
+    </script> -->
+  </body>
+</html>

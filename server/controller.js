@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
-import { goalSchema } from "./model.js";
+import { goalSchema, userSchema } from "./model.js";
 import bodyParser from "body-parser";
 import { __dirname } from "../dir.js";
 
 
 
-
+const User = mongoose.model('User', userSchema)
 const Goal = mongoose.models.Goal || mongoose.model('Goal', goalSchema);
+
 
 
 // const makeServer = new Goal({ goal: 'Make a NodeJS server hosting your goals', timeLimit: 2 })
@@ -65,5 +66,29 @@ export const removeGoal = async (req, res) => {
         }
         console.log('goal', goal);
         res.json({ message: `Goal ${req.body._id} has been deleted successfully!`})
+    })
+}
+
+export const createUser = (req, res) => {
+    let user = new User(req.body);
+
+    user.save((err, data) => {
+        console.log('req.body: ', req.body);
+        if (err) console.error(err);
+        res.json(data);
+        
+    })
+}
+
+export const checkForUser = (req, res) => {
+    let userID = req.query.clerkID;
+    console.log(userID);
+    User.findOne({ clerkID: userID }, (err, user) => {
+        if (err) console.error(err)
+        if (user) {
+            res.json({ exists: true })
+        } else {
+            res.json({ exists: false })
+        }
     })
 }
