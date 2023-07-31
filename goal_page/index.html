@@ -17,6 +17,7 @@
         <h1 class="text-4xl text-center p-4 font-thin">
           Daily Goals
         </h1>
+        <button onclick="signMeOut()" class="btn btn-round">Sign Out</button>
         <form id="form" class="flex flex-col" action="/goal" method="post">
         <!-- <form id="form" class="flex flex-col"> -->
           <input id="goalID" class="input input-success border border-solid border-black rounded-md p-1" placeholder="" type="text" name="goal">
@@ -60,12 +61,13 @@
           e.preventDefault();
           let data = {
             goal: goalID,
-            timeLimit: timeID
+            timeLimit: timeID,
+            userID: window.Clerk.user.id
           }
           document.querySelector('#goalID').value = '';
           document.querySelector('#timeID').value = '';
 
-            fetch('/goal', {
+            fetch(`/goal/${data.userID}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -86,9 +88,11 @@
     <!-- initial fetch of data -->
     <script>
       (async function() {
-      await fetch('/find', { method: 'GET' })
+        const clerkID = window.location.href.split('/')[4];
+        console.log('window.Clerk ', clerkID)
+      await fetch(`/find/${clerkID}`, { method: 'GET' })
           .then(res => res.json())
-          // .then(data => console.log(data))
+          // .then(data => console.log('/find data ', data))
           .then(data => appendData(data))
           .then(() => inputListeners())
           .then(() => closeListeners())
@@ -101,11 +105,12 @@
       let dataArr = [];
       function appendData(data, newData) {
         dataArr = [...data]
+        console.log('data log from func', data);
         
         // data === false ? dataArr = [...new Set(newData)] : null
         // data !== false ? dataArr = [...new Set(data)] : null
         // console.log(dataArr);
-        let div = document.querySelector('#tain')
+        let div = document.querySelector('#tain');
 
         div.innerHTML = dataArr?.map((i, index) => `
           <div class="bg-neutral min-w-sm rounded overflow-hidden shadow-lg m-1 grid-cols-4">
@@ -221,15 +226,23 @@
         inputs.forEach((input) => {
             input.value = ''
         })
-      })
+      });
+
+      
     </script>
-    <!-- <script
+    <script
       async
       crossorigin="anonymous"
       data-clerk-publishable-key="pk_test_cm9idXN0LW1hZ2dvdC03OS5jbGVyay5hY2NvdW50cy5kZXYk"
       onload="window.Clerk.load()"
       src="https://robust-maggot-79.clerk.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"
       type="text/javascript">
-    </script> -->
+    </script>
+    <script>
+      async function signMeOut() {
+        await window.Clerk.signOut();
+        window.location = '/';
+      }
+    </script>
   </body>
 </html>

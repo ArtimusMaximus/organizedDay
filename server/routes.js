@@ -13,12 +13,14 @@ export const routes = app => {
         //     console.log('supposed redirect ?');
         //     console.log(__dirname);
         // })
+        // .get(checkForUser)
         .post(createUser)
 
-    app.route('/goal')
+    app.route('/goal/:clerkID')
         .get((req, res) => {
             res.sendFile(__dirname + '/goal_page/')
             console.log('THE GET FIREED OFF');
+            console.log('params from get', req.params.clerkID)
         })
         .post(createGoal)
 
@@ -38,7 +40,7 @@ export const routes = app => {
     app.route('/finduser')
        .get(checkForUser)
         
-    app.route('/find')
+    app.route('/find/:clerkID')
         .get(findGoals)
 
     app.route('/updateCompleted')

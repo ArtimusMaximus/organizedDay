@@ -2,11 +2,7 @@ import mongoose from "mongoose";
 import { goalSchema, userSchema } from "./model.js";
 import bodyParser from "body-parser";
 import { __dirname } from "../dir.js";
-
-
-
-const User = mongoose.model('User', userSchema)
-const Goal = mongoose.models.Goal || mongoose.model('Goal', goalSchema);
+import { Goal, User } from "./model.js";
 
 
 
@@ -22,26 +18,54 @@ const Goal = mongoose.models.Goal || mongoose.model('Goal', goalSchema);
 
 // console.log('>>>>> ', makeServer.goal, makeServer.timeLimit)
 // makeServer.save();
+let a;
 
 export const createGoal = async (req, res) => {
-    const newGoal = new Goal(req.body)
+    let user = req.body.userID;
+    console.log('userID: ', user);
+
+    const newGoal = new Goal(req.body);
     await newGoal.save((err, data) => {
-        if (err) {
-            console.log(err);
-        }
-        res.json(data)
+        if (err) console.error(err);
+        
+        res.json(data);
         console.log('Post success.');
         console.log(data);
+        User.findOne({ clerkID: user }, (err, user) => {
+            if(err) console.error(err);
+            if(user)
+            {
+                user.goals.push(data._id);
+                user.save();
+                console.log('newly saved user: ', user);
+            }
+        })
     })
 }
 
+
 export const findGoals = async (req, res) => {
-    Goal.find({}, (err, data) => {
+    const userID = req.params.clerkID;
+    console.log('findGoals userID ', userID); 
+    
+    User.findOne({ clerkID: userID }, (err, data) => {
         if (err) {
             console.log(err);
         }
-        res.json(data);
-        console.log(data);
+        const userGoals = data.goals;
+        
+        User
+            .findById(data._id)
+            .populate('goals')
+            .exec((err, user) => {
+                if (err) console.log(err);
+                else if (!user) {
+                    console.log('user not found');
+                } else {
+                    console.log('user ? ', user.goals)
+                    res.json(user.goals);
+                }
+            })
     })
 }
 
@@ -82,13 +106,18 @@ export const createUser = (req, res) => {
 
 export const checkForUser = (req, res) => {
     let userID = req.query.clerkID;
-    console.log(userID);
+    console.log('checkForUser userID: ', userID);
     User.findOne({ clerkID: userID }, (err, user) => {
         if (err) console.error(err)
         if (user) {
-            res.json({ exists: true })
+            res.json({ exists: true, })
         } else {
             res.json({ exists: false })
         }
     })
 }
+
+
+
+// get your user
+// populate the goals from the user

@@ -24,9 +24,10 @@ const startClerk = async () => {
                     .then((res) => res.json())
                     .then((data) => {
                         if (data.exists) {
+                            console.log('data exists ', data)
                             // redirect
                             alert('Redirecting...')
-                            window.location = '/goal'
+                            window.location = `/goal/${user.id}`;
                             console.log('User already exists, proceed plz');
                         } else if (data.exists === false) {
                             fetch('/', {
@@ -39,7 +40,7 @@ const startClerk = async () => {
                             .then((res) => res.json())
                             .then(newUser => {
                                 console.log('New User: ', newUser);
-                                window.location = '/goal'
+                                // window.location = '/goal'
                             })
                             .catch(err => console.log(err))
                         }

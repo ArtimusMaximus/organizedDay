@@ -10,6 +10,16 @@ export const goalSchema = new mongoose.Schema({
 
 export const userSchema = new mongoose.Schema({
     email: String,
-    clerkID: String
+    clerkID: String,
+    goals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Goal'}]
 },
 { timestamps: true })
+
+
+const User = mongoose.model('User', userSchema)
+const Goal = mongoose.models.Goal || mongoose.model('Goal', goalSchema);
+
+export {
+    Goal,
+    User
+}

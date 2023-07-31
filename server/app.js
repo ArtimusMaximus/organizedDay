@@ -1,13 +1,10 @@
 import express from 'express';
-import ViteExpress from 'vite-express'
-import path from 'path';
 import mongoMain from '../database/mongodb.js';
 import { routes } from './routes.js';
 import bodyParser from 'body-parser';
 import { __filename } from '../dir.js';
 import { __dirname } from '../dir.js';
-import * as dotenv from 'dotenv';
-import { MongoClient } from 'mongodb';
+
 
 
 // const __filename = fileURLToPath(import.meta.url); // app.js is the filename
@@ -54,8 +51,6 @@ app.use(express.static(__dirname + '/dist'))
 
 routes(app);
 const PORT = process.env.PORT || 3333;
-
-
 
 
 app.listen(PORT, () => {
