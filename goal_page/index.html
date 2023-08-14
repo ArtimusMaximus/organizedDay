@@ -105,7 +105,7 @@
       let dataArr = [];
       function appendData(data, newData) {
         dataArr = [...data]
-        console.log('data log from func', data);
+        console.log('data log from func', data[0]?._id);
         
         // data === false ? dataArr = [...new Set(newData)] : null
         // data !== false ? dataArr = [...new Set(data)] : null
@@ -186,25 +186,30 @@
       const delay = t => new Promise(resolve => setTimeout(resolve, t))
 
       function closeListeners() {
+        const clerkID = window.location.href.split('/')[4];
+        console.log('window.Clerk ', clerkID)
         let closes = document.querySelectorAll('.close')
         closes && closes.forEach(x => {
           x.addEventListener('click', e => {
             if (e) {
               let id = e.target.id;
               let index = id.slice(6)
+              console.log('id : ', id);
+              console.log('index LOGGING: ', index);
   
               const removeGoal = async () => {
-                let _id = { _id: dataArr[index]._id }
-                await fetch('/del', {
+                let _id = { _id: dataArr[index]._id };
+                console.log('_id from delete ', _id);
+                await fetch(`/del/${clerkID}`, {
                   method: 'DELETE',
                   headers: {
                     'Content-Type': 'application/json'
                   },
                   body: JSON.stringify(_id)
                 })
-                .then(res => res.json())
+                // .then(res => res.json())
                 .then(data => console.log(data))
-                .then(() => appendData(dataArr.filter(i => i._id !== _id._id)))
+                .then(() => appendData(dataArr.filter(i => i?._id !== _id?._id)))
                 .then(() => inputListeners())
                 .then(() => closeListeners())
                 .catch(err => console.log(err))

@@ -29,8 +29,10 @@ export const createGoal = async (req, res) => {
         if (err) console.error(err);
         
         res.json(data);
+        console.log('data: ', data)
         console.log('Post success.');
-        console.log(data);
+        console.log('data from create goal', typeof  data._id);
+        
         User.findOne({ clerkID: user }, (err, user) => {
             if(err) console.error(err);
             if(user)
@@ -83,14 +85,32 @@ export const updateComplete = async (req, res) => {
 
 export const removeGoal = async (req, res) => {
     console.log('remove goal id', req.body._id);
+    const goalID = mongoose.Types.ObjectId(req.body._id);
+    const userID = req.params.clerkID;
 
-    Goal.deleteOne({ _id: req.body._id }, (err, goal) => {
-        if (err) {
-            console.log(err);
-        }
-        console.log('goal', goal);
-        res.json({ message: `Goal ${req.body._id} has been deleted successfully!`})
-    })
+    try {
+        const user = await User.findOneAndUpdate(
+            { clerkID: userID, goals: goalID }, 
+            { $pull: { goals: goalID } }, 
+            { new: true }
+        );
+        if(!user) return res.status(404).json({ message: 'User not found!' });
+        
+        await Goal.findByIdAndDelete(goalID);
+        res.status(204).end();
+        // await Goal.deleteOne({ _id: req.body._id }, (err, goal) => {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+        //     console.log('goal', goal);
+        //     res.json({ message: `Goal ${req.body._id} has been deleted successfully!`})
+        // });
+
+
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Internal server error.'})
+    }
 }
 
 export const createUser = (req, res) => {

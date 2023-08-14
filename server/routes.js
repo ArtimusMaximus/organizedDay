@@ -46,7 +46,7 @@ export const routes = app => {
     app.route('/updateCompleted')
         .post(updateComplete)
         
-    app.route('/del')
+    app.route('/del/:clerkID')
         .delete(removeGoal)
 
     

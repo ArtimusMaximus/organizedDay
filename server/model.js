@@ -17,7 +17,8 @@ export const userSchema = new mongoose.Schema({
 
 
 const User = mongoose.model('User', userSchema)
-const Goal = mongoose.models.Goal || mongoose.model('Goal', goalSchema);
+// const Goal = mongoose.models.Goal || mongoose.model('Goal', goalSchema);
+const Goal = mongoose.model('Goal', goalSchema);
 
 export {
     Goal,
